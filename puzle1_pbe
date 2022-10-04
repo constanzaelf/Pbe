@@ -1,0 +1,44 @@
+import time
+import binascii
+from pn532pi import Pn532, pn532
+from pn532pi import Pn532I2c
+from pn532pi import Pn532Spi
+from pn532pi import Pn532Hsu
+
+PN532_HSU = Pn532Hsu(Pn532Hsu.RPI_MINI_UART)
+nfc = Pn532(PN532_HSU)
+
+def setup():
+    nfc.begin()
+
+    versiondata = nfc.getFirmwareVersion()
+    if (not versiondata):
+        print("NO SE HA ENCONTRADO EL ERROR")
+        raise RuntimeError("PLACA NO ENCONTRADA")
+    print("Placa encontrada \t")
+    print("Firmware ver. {:d}.{:d}".format((versiondata >> 24) & 0xFF, (version>
+                                                                (versiondata >>>
+    nfc.SAMConfig()
+
+    print("ESPERANDO A QUE APROXIME TARJETA...")
+
+def loop():
+        success, uid = nfc.readPassiveTargetID(pn532.PN532_MIFARE_ISO14443A_106>
+        if(success):
+                #print(uid)
+                #print(hex(uid))
+                txto= (binascii.b2a_hex(uid))
+                #txto=str(txto,'utf-8')
+                txto=str(txto,"utf-8").upper()
+                print("Identificador de tarjeta:")
+                print(txto)             
+                return True
+                          return True
+        else:
+                return False
+if __name__ == '__main__':
+    setup()
+    found = loop()
+    while not found:
+        found = loop()
+

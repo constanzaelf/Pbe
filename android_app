@@ -1,0 +1,48 @@
+public class MainActivity extends AppCompatActivity {
+    EditText edtUsuario, edtPassword;
+    Button btnLogin;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        edtUsuario=findViewById(R.id.edtUsuario);
+        edtPassword=findViewById(R.id.edtPassword);
+        btnLogin=findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                validarUsuario("http://localhost/validar_usuario.php");
+            }
+        });
+    }
+    private void validarUsuario(String URL) {
+        StringRequest stringRequest= new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (!response.isEmpty()) {
+                    Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_SHORT).show();
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> parametros = new HashMap<>();
+                parametros.put("Nom",edtUsuario.getText().toString());
+                parametros.put("u_password",edtPassword.getText().toString());
+                return parametros;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+
+        }
+}
